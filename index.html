@@ -8,6 +8,7 @@
     * { box-sizing: border-box; }
     html, body { margin: 0; min-height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #dfe6e3; color: #333; }
     body { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    body, .frame, .frame * { cursor: none !important; }
     .frame { width: min(390px, calc(100vw - 48px)); height: min(844px, calc(100vh - 48px)); background: #F5F7F9; border: 10px solid #111; border-radius: 34px; overflow: hidden; position: relative; box-shadow: 0 20px 80px rgba(31,54,47,.22); }
     .status { height: 34px; background: #4A7B6B; color: #fff; padding: 8px 20px 0; font-size: 12px; display: flex; justify-content: space-between; }
     .nav { height: 46px; background: #4A7B6B; color: #fff; display: flex; align-items: center; justify-content: center; position: relative; font-weight: 700; }
@@ -57,8 +58,10 @@
     .quota { display: flex; gap: 10px; margin-top: 14px; }
     .quota div { flex: 1; background: #F5F7F9; border-radius: 8px; padding: 12px; }
     .quota strong { display: block; color: #4A7B6B; font-size: 22px; margin-top: 4px; }
-    .gallery { column-count: 2; column-gap: 10px; }
-    .gallery img, .gallery .ph { width: 100%; min-height: 148px; object-fit: cover; border-radius: 10px; background: linear-gradient(135deg, #9CC8BA, #F5A623); display: block; margin: 0 0 10px; break-inside: avoid; box-shadow: 0 1px 8px rgba(0,0,0,.06); }
+    .gallery-card { padding-left: 0; padding-right: 0; overflow: hidden; }
+    .gallery-card .title { padding: 0 18px; }
+    .gallery { display: flex; flex-direction: column; gap: 12px; }
+    .gallery img, .gallery .ph { width: 100%; height: 260px; object-fit: cover; border-radius: 0; background: linear-gradient(135deg, #9CC8BA, #F5A623); display: block; box-shadow: none; }
     .upload-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
     .upload-item { position: relative; border-radius: 8px; overflow: hidden; background: #F5F7F9; }
     .upload-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; display: block; }
@@ -181,7 +184,7 @@
       const oldRemain = Math.max(0, 3 - (item.signNum - item.newUserNum));
       const newRemain = Math.max(0, 1 - item.newUserNum);
       const images = (item.images && item.images.length ? item.images : [item.cover]).filter(x => x !== undefined);
-      screen.innerHTML = `<div class="banner">${images[0] ? `<img src="${images[0]}">` : 'MateCircle'}</div><div class="card"><div class="space"><span class="activity-title">${item.title}</span><span class="price">¥${item.price.toFixed(2)}/人</span></div><div class="meta">${item.time} - ${item.time.slice(0,10)} 17:00</div><div class="meta">${item.address}</div><div class="quota"><div><span class="muted">老用户名额</span><strong>${oldRemain}/3</strong></div><div><span class="muted">新人名额</span><strong>${newRemain}/1</strong></div></div></div><div class="card"><div class="title">活动介绍</div><p>${item.content}</p></div><div class="card"><div class="title">已报名</div><p class="muted">已有 ${item.signNum} 位搭子报名</p></div><div class="card"><div class="title">主理人上传图片</div><div class="gallery">${images.map((img, index) => img ? `<img src="${img}" style="height:${index % 3 === 1 ? 220 : index % 3 === 2 ? 172 : 196}px">` : `<div class="ph" style="height:${index % 2 ? 210 : 168}px"></div>`).join('')}</div></div><div class="bottom row"><button class="btn secondary small" id="chatBtn">群聊</button><button class="btn" id="signupBtn">${item.paid ? '已缴费' : item.signNum >= 4 ? '名额已满' : '立即报名'}</button></div>`;
+      screen.innerHTML = `<div class="banner">${images[0] ? `<img src="${images[0]}">` : 'MateCircle'}</div><div class="card"><div class="space"><span class="activity-title">${item.title}</span><span class="price">¥${item.price.toFixed(2)}/人</span></div><div class="meta">${item.time} - ${item.time.slice(0,10)} 17:00</div><div class="meta">${item.address}</div><div class="quota"><div><span class="muted">老用户名额</span><strong>${oldRemain}/3</strong></div><div><span class="muted">新人名额</span><strong>${newRemain}/1</strong></div></div></div><div class="card"><div class="title">活动介绍</div><p>${item.content}</p></div><div class="card"><div class="title">已报名</div><p class="muted">已有 ${item.signNum} 位搭子报名</p></div><div class="card gallery-card"><div class="title">主理人上传图片</div><div class="gallery">${images.map(img => img ? `<img src="${img}">` : '<div class="ph"></div>').join('')}</div></div><div class="bottom row"><button class="btn secondary small" id="chatBtn">群聊</button><button class="btn" id="signupBtn">${item.paid ? '已缴费' : item.signNum >= 4 ? '名额已满' : '立即报名'}</button></div>`;
       document.getElementById('chatBtn').onclick = () => item.paid ? go('chat') : toast('缴费后可进入群聊');
       document.getElementById('signupBtn').onclick = () => item.paid ? go('chat') : go('pay');
     }
